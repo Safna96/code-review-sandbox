@@ -11,8 +11,16 @@ public class ProductSearchService
 
     public SearchResult Search(string term, int page, int pageSize)
     {
-        // Paging is not implemented yet - see issue #7.
-        return new SearchResult(new List<string>(), 0);
+        var matches = _catalogue
+            .Where(p => p.Contains(term, StringComparison.OrdinalIgnoreCase))
+            .ToList();
+
+        var items = matches
+            .Skip((page - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return new SearchResult(items, items.Count);
     }
 }
 
