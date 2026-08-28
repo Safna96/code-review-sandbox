@@ -6,9 +6,26 @@ namespace Sandbox;
 /// </summary>
 public class FileUploadValidator
 {
+    private const int MaxBytes = 5 * 1024 * 1024;
+
+    private static readonly string[] AllowedExtensions = { ".jpg", ".jpeg", ".png", ".pdf" };
+
     public UploadResult Validate(string fileName, byte[] content)
     {
-        // Nothing is checked yet - see issue #9.
+        if (content.Length > MaxBytes)
+        {
+            return new UploadResult(false, "The file could not be accepted.");
+        }
+
+        var extension = Path.GetExtension(fileName).ToLowerInvariant();
+        if (!AllowedExtensions.Contains(extension))
+        {
+            return new UploadResult(false, "The file could not be accepted.");
+        }
+
+        var destination = "/var/uploads/" + fileName;
+        Console.WriteLine($"accepting upload to {destination}");
+
         return new UploadResult(true, null);
     }
 }
